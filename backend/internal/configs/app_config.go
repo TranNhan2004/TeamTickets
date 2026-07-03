@@ -8,9 +8,10 @@ import (
 )
 
 type AppConfig struct {
-	Env  string
-	Port string
-	DB   *DBConfig
+	Env    string
+	Port   string
+	LogDir string
+	DB     *DBConfig
 }
 
 func LoadAppConfig() (*AppConfig, error) {
@@ -19,7 +20,7 @@ func LoadAppConfig() (*AppConfig, error) {
 		appEnv = "development"
 	}
 
-	_ = godotenv.Load("env/.env")
+	_ = godotenv.Load("env/.env.example")
 
 	envFile := fmt.Sprintf("env/.env.%s", appEnv)
 	if err := godotenv.Overload(envFile); err != nil {
@@ -32,8 +33,9 @@ func LoadAppConfig() (*AppConfig, error) {
 	}
 
 	return &AppConfig{
-		Env:  appEnv,
-		Port: os.Getenv("APP_PORT"),
-		DB:   dbConfig,
+		Env:    appEnv,
+		Port:   os.Getenv("APP_PORT"),
+		LogDir: os.Getenv("LOG_DIR"),
+		DB:     dbConfig,
 	}, nil
 }
