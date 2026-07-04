@@ -16,6 +16,7 @@ type User struct {
 	IsEmailVerified bool       `gorm:"column:is_email_verified"`
 	IsActive        bool       `gorm:"column:is_active"`
 	AvatarURL       *string    `gorm:"column:avatar_url"`
+	IsDeleted       bool       `gorm:"column:is_deleted"`
 	DeletedAt       *time.Time `gorm:"column:deleted_at"`
 	CreatedAt       time.Time  `gorm:"column:created_at"`
 	UpdatedAt       time.Time  `gorm:"column:updated_at"`
