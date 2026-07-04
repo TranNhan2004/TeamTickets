@@ -1,0 +1,12 @@
+<mat-chip-set>
+  <mat-chip
+    [matTooltip]="tooltipTitle() || ''"
+    [matTooltipDisabled]="!tooltipTitle()"
+    class="tt-chip"
+    [disableRipple]="true"
+    [ngClass]="chipClass()"
+    [ngStyle]="chipStyle()"
+  >
+    {{ label() }}
+  </mat-chip>
+</mat-chip-set>

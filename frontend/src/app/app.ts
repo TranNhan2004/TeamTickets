@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Button } from "./common/button/button";
+import { Chip } from "./common/chip/chip";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [Button, Chip],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('frontend');
+  protected readonly title = signal('Team Tickets');
 }

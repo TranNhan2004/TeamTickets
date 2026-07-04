@@ -1,0 +1,54 @@
+@switch (variant()) {
+  @case ('outlined') {
+    <button
+      mat-stroked-button
+      [matTooltip]="tooltipTitle() || ''"
+      [matTooltipDisabled]="!tooltipTitle()"
+      class="tt-button"
+      [disabled]="disabled()"
+      [ngClass]="buttonClass()"
+      [ngStyle]="buttonStyle()"
+    >
+      {{ label() }}
+    </button>
+  }
+  @case ('tonal') {
+    <button
+      mat-stroked-button
+      [matTooltip]="tooltipTitle() || ''"
+      [matTooltipDisabled]="!tooltipTitle()"
+      class="tt-button"
+      [disabled]="disabled()"
+      [ngClass]="buttonClass()"
+      [ngStyle]="buttonStyle()"
+    >
+      {{ label() }}
+    </button>
+  }
+  @case ('text') {
+    <button
+      mat-button
+      [matTooltip]="tooltipTitle() || ''"
+      [matTooltipDisabled]="!tooltipTitle()"
+      class="tt-button"
+      [disabled]="disabled()"
+      [ngClass]="buttonClass()"
+      [ngStyle]="buttonStyle()"
+    >
+      {{ label() }}
+    </button>
+  }
+  @default {
+    <button
+      mat-flat-button
+      [matTooltip]="tooltipTitle() || ''"
+      [matTooltipDisabled]="!tooltipTitle()"
+      class="tt-button"
+      [disabled]="disabled()"
+      [ngClass]="buttonClass()"
+      [ngStyle]="buttonStyle()"
+    >
+      {{ label() }}
+    </button>
+  }
+}
