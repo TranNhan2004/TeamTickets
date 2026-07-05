@@ -44,7 +44,7 @@ func (r *userRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*User,
 
 	err := r.db.
 		WithContext(ctx).
-		Where("id = ? AND deleted_at IS NULL", id).
+		Where("id = ? AND is_deleted = false", id).
 		First(&user).
 		Error
 
@@ -65,7 +65,7 @@ func (r *userRepositoryImpl) Update(ctx context.Context, user *User) error {
 	result := r.db.
 		WithContext(ctx).
 		Model(&User{}).
-		Where("id = ? AND deleted_at IS NULL", user.ID).
+		Where("id = ? AND is_deleted = false", user.ID).
 		Updates(map[string]any{
 			"first_name":        user.FirstName,
 			"last_name":         user.LastName,
@@ -95,8 +95,9 @@ func (r *userRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error {
 	result := r.db.
 		WithContext(ctx).
 		Model(&User{}).
-		Where("id = ? AND deleted_at IS NULL", id).
+		Where("id = ? AND is_deleted = false", id).
 		Updates(map[string]any{
+			"is_deleted": true,
 			"deleted_at": now,
 			"updated_at": now,
 			"is_active":  false,

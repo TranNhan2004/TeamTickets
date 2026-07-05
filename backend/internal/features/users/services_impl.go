@@ -30,12 +30,12 @@ func (s *userService) Create(ctx context.Context, model CreateUserRequestModel) 
 		model.DisplayName == "" ||
 		model.Email == "" ||
 		model.Password == "" {
-		return nil, apperrors.BadRequest("INVALID_USER_INPUT", "invalid user input")
+		return nil, NewErrorInvalidInput()
 	}
 
 	hashedPassword, err := hashPassword(model.Password)
 	if err != nil {
-		return nil, apperrors.Internal("HASH_PASSWORD_FAILED", "hash password failed", err)
+		return nil, apperrors.Internal("HASH_PASSWORD_FAILED", "hash password failed")
 	}
 
 	user := &User{
@@ -50,7 +50,7 @@ func (s *userService) Create(ctx context.Context, model CreateUserRequestModel) 
 	}
 
 	if err := s.userRepository.Create(ctx, user); err != nil {
-		return nil, apperrors.Conflict("CREATE_USER_CONFLICT", "registration failed, please try again later")
+		return nil, NewErrorCreateFailed(err)
 	}
 
 	return &CreateUserResponseModel{
@@ -66,16 +66,16 @@ func (s *userService) Create(ctx context.Context, model CreateUserRequestModel) 
 
 func (s *userService) FindByID(ctx context.Context, id uuid.UUID) (*GetUserResponseModel, *apperrors.AppError) {
 	if id == uuid.Nil {
-		return nil, apperrors.BadRequest("INVALID_USER_INPUT", "invalid user input")
+		return nil, NewErrorInvalidInput()
 	}
 
 	user, err := s.userRepository.FindByID(ctx, id)
 	if err != nil {
-		return nil, apperrors.Internal("FIND_USER_ERROR", "failed to find user", err)
+		return nil, NewErrorGetFailed(err)
 	}
 
 	if user == nil {
-		return nil, apperrors.NotFound("USER_NOT_FOUND", "user not found")
+		return nil, NewErrorNotFound()
 	}
 
 	return &GetUserResponseModel{
@@ -92,16 +92,16 @@ func (s *userService) FindByID(ctx context.Context, id uuid.UUID) (*GetUserRespo
 
 func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUserRequestModel) (*UpdateUserResponseModel, *apperrors.AppError) {
 	if id == uuid.Nil {
-		return nil, apperrors.BadRequest("INVALID_USER_INPUT", "invalid user input")
+		return nil, NewErrorInvalidInput()
 	}
 
 	user, err := s.userRepository.FindByID(ctx, id)
 	if err != nil {
-		return nil, apperrors.Internal("FIND_USER_ERROR", "failed to find user", err)
+		return nil, NewErrorGetFailed(err)
 	}
 
 	if user == nil {
-		return nil, apperrors.NotFound("USER_NOT_FOUND", "user not found")
+		return nil, NewErrorNotFound()
 	}
 
 	model.FirstName = strings.TrimSpace(model.FirstName)
@@ -111,7 +111,7 @@ func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUser
 	if model.FirstName == "" ||
 		model.LastName == "" ||
 		model.DisplayName == "" {
-		return nil, apperrors.BadRequest("INVALID_USER_INPUT", "invalid user input")
+		return nil, NewErrorInvalidInput()
 	}
 
 	user.FirstName = model.FirstName
@@ -120,7 +120,7 @@ func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUser
 	user.AvatarURL = model.AvatarURL
 
 	if err := s.userRepository.Update(ctx, user); err != nil {
-		return nil, apperrors.Internal("UPDATE_USER_ERROR", "failed to update user", err)
+		return nil, NewErrorUpdateFailed(err)
 	}
 
 	return &UpdateUserResponseModel{
@@ -136,16 +136,16 @@ func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUser
 
 func (s *userService) Delete(ctx context.Context, id uuid.UUID) *apperrors.AppError {
 	if id == uuid.Nil {
-		return apperrors.BadRequest("INVALID_USER_INPUT", "invalid user input")
+		return NewErrorInvalidInput()
 	}
 
 	user, err := s.userRepository.FindByID(ctx, id)
 	if err != nil {
-		return apperrors.Internal("FIND_USER_ERROR", "failed to find user", err)
+		return NewErrorGetFailed(err)
 	}
 
 	if user == nil {
-		return apperrors.NotFound("USER_NOT_FOUND", "user not found")
+		return NewErrorNotFound()
 	}
 
 	s.userRepository.Delete(ctx, id)

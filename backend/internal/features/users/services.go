@@ -2,16 +2,9 @@ package users
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 	"github.com/trannhanlv2004/team-tickets/internal/apperrors"
-)
-
-var (
-	ErrUserNotFound      = errors.New("user not found")
-	ErrInvalidUserInput  = errors.New("invalid user input")
-	ErrEmailAlreadyInUse = errors.New("email already in use")
 )
 
 type UserService interface {

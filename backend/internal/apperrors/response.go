@@ -14,16 +14,20 @@ type ErrorResponse struct {
 
 func Respond(ctx *gin.Context, appErr *AppError) {
 	if appErr != nil {
-		ctx.JSON(appErr.StatusCode, ErrorResponse{
-			Code:    appErr.Code,
-			Message: appErr.Message,
-			Details: appErr.Details,
+		ctx.JSON(appErr.StatusCode, gin.H{
+			"error": ErrorResponse{
+				Code:    string(appErr.Code),
+				Message: appErr.Message,
+				Details: appErr.Details,
+			},
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusInternalServerError, ErrorResponse{
-		Code:    "INTERNAL_SERVER_ERROR",
-		Message: "Something went wrong",
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"error": ErrorResponse{
+			Code:    "INTERNAL_SERVER_ERROR",
+			Message: "Something went wrong",
+		},
 	})
 }
