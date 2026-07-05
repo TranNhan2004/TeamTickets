@@ -3,9 +3,9 @@ package users
 import (
 	"context"
 	"errors"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/trannhanlv2004/team-tickets/internal/features/shared"
 	"gorm.io/gorm"
 )
 
@@ -19,30 +19,29 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepositoryImpl) Create(ctx context.Context, user *User) error {
-	if user.ID == uuid.Nil {
-		id, err := uuid.NewV7()
-		if err != nil {
-			return err
-		}
+func (r *userRepositoryImpl) Create(ctx context.Context, user *User, audit *shared.AuditModel) error {
+	db := shared.DBFromContext(ctx, r.db)
 
-		user.ID = id
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
 	}
 
-	now := time.Now().UTC()
-	user.CreatedAt = now
-	user.UpdatedAt = now
+	user.ID = id
+	user.CreatedAt = audit.AuditTime
+	user.UpdatedAt = audit.AuditTime
 
-	return r.db.
+	return db.
 		WithContext(ctx).
 		Create(user).
 		Error
 }
 
 func (r *userRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*User, error) {
-	var user User
+	db := shared.DBFromContext(ctx, r.db)
 
-	err := r.db.
+	var user User
+	err := db.
 		WithContext(ctx).
 		Where("id = ? AND is_deleted = false", id).
 		First(&user).
@@ -59,10 +58,11 @@ func (r *userRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*User,
 	return &user, nil
 }
 
-func (r *userRepositoryImpl) Update(ctx context.Context, user *User) error {
-	user.UpdatedAt = time.Now().UTC()
+func (r *userRepositoryImpl) Update(ctx context.Context, user *User, audit *shared.AuditModel) error {
+	db := shared.DBFromContext(ctx, r.db)
 
-	result := r.db.
+	user.UpdatedAt = audit.AuditTime
+	result := db.
 		WithContext(ctx).
 		Model(&User{}).
 		Where("id = ? AND is_deleted = false", user.ID).
@@ -89,17 +89,17 @@ func (r *userRepositoryImpl) Update(ctx context.Context, user *User) error {
 	return nil
 }
 
-func (r *userRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error {
-	now := time.Now().UTC()
+func (r *userRepositoryImpl) Delete(ctx context.Context, id uuid.UUID, audit *shared.AuditModel) error {
+	db := shared.DBFromContext(ctx, r.db)
 
-	result := r.db.
+	result := db.
 		WithContext(ctx).
 		Model(&User{}).
 		Where("id = ? AND is_deleted = false", id).
 		Updates(map[string]any{
 			"is_deleted": true,
-			"deleted_at": now,
-			"updated_at": now,
+			"deleted_at": audit.AuditTime,
+			"updated_at": audit.AuditTime,
 			"is_active":  false,
 		})
 

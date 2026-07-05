@@ -1,9 +1,11 @@
 package app
 
 import (
+	"github.com/trannhanlv2004/team-tickets/internal/configs"
+	"github.com/trannhanlv2004/team-tickets/internal/database"
 	"github.com/trannhanlv2004/team-tickets/internal/features/users"
 	"github.com/trannhanlv2004/team-tickets/internal/health"
-	"gorm.io/gorm"
+	"github.com/trannhanlv2004/team-tickets/internal/logger"
 )
 
 type Dependencies struct {
@@ -11,7 +13,15 @@ type Dependencies struct {
 	UserHandler   *users.UserHandler
 }
 
-func NewDependencies(db *gorm.DB) *Dependencies {
+func NewDependencies(dbConfig *configs.DBConfig, logger *logger.Logger) *Dependencies {
+	db, err := database.ConnectPostgres(*dbConfig)
+	if err != nil {
+		logger.Error.Printf("failed to connect postgres: %v", err)
+		panic(err)
+	}
+
+	// txManager := shared.NewTransactionManager(db)
+
 	healthDatabaseChecker := health.NewDatabaseChecker(db)
 	healthService := health.NewService(healthDatabaseChecker)
 	healthHandler := health.NewHandler(healthService)

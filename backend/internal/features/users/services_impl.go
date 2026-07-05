@@ -3,9 +3,11 @@ package users
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/trannhanlv2004/team-tickets/internal/apperrors"
+	"github.com/trannhanlv2004/team-tickets/internal/features/shared"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,6 +22,10 @@ func NewUserService(r UserRepository) UserService {
 }
 
 func (s *userService) Create(ctx context.Context, model CreateUserRequestModel) (*CreateUserResponseModel, *apperrors.AppError) {
+	audit := shared.AuditModel{
+		AuditTime: time.Now().UTC(),
+	}
+
 	model.FirstName = strings.TrimSpace(model.FirstName)
 	model.LastName = strings.TrimSpace(model.LastName)
 	model.DisplayName = strings.TrimSpace(model.DisplayName)
@@ -49,7 +55,7 @@ func (s *userService) Create(ctx context.Context, model CreateUserRequestModel) 
 		AvatarURL:       model.AvatarURL,
 	}
 
-	if err := s.userRepository.Create(ctx, user); err != nil {
+	if err := s.userRepository.Create(ctx, user, &audit); err != nil {
 		return nil, NewErrorCreateFailed(err)
 	}
 
@@ -91,6 +97,10 @@ func (s *userService) FindByID(ctx context.Context, id uuid.UUID) (*GetUserRespo
 }
 
 func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUserRequestModel) (*UpdateUserResponseModel, *apperrors.AppError) {
+	audit := shared.AuditModel{
+		AuditTime: time.Now().UTC(),
+	}
+
 	if id == uuid.Nil {
 		return nil, NewErrorInvalidInput()
 	}
@@ -119,7 +129,7 @@ func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUser
 	user.DisplayName = model.DisplayName
 	user.AvatarURL = model.AvatarURL
 
-	if err := s.userRepository.Update(ctx, user); err != nil {
+	if err := s.userRepository.Update(ctx, user, &audit); err != nil {
 		return nil, NewErrorUpdateFailed(err)
 	}
 
@@ -135,6 +145,10 @@ func (s *userService) Update(ctx context.Context, id uuid.UUID, model UpdateUser
 }
 
 func (s *userService) Delete(ctx context.Context, id uuid.UUID) *apperrors.AppError {
+	audit := shared.AuditModel{
+		AuditTime: time.Now().UTC(),
+	}
+
 	if id == uuid.Nil {
 		return NewErrorInvalidInput()
 	}
@@ -148,7 +162,7 @@ func (s *userService) Delete(ctx context.Context, id uuid.UUID) *apperrors.AppEr
 		return NewErrorNotFound()
 	}
 
-	s.userRepository.Delete(ctx, id)
+	s.userRepository.Delete(ctx, id, &audit)
 	return nil
 }
 

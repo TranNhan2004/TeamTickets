@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trannhanlv2004/team-tickets/internal/app"
 	"github.com/trannhanlv2004/team-tickets/internal/configs"
-	"github.com/trannhanlv2004/team-tickets/internal/database"
 	"github.com/trannhanlv2004/team-tickets/internal/logger"
 	"github.com/trannhanlv2004/team-tickets/internal/routes"
 )
@@ -31,13 +30,7 @@ func main() {
 
 	r := gin.Default()
 
-	db, err := database.ConnectPostgres(*appConfig.DB)
-	if err != nil {
-		appLogger.Error.Printf("failed to connect postgres: %v", err)
-		panic(err)
-	}
-
-	dependencies := app.NewDependencies(db)
+	dependencies := app.NewDependencies(appConfig.DB, appLogger)
 	routes.RegisterV1(r, dependencies)
 
 	if err := r.Run(":" + appConfig.Port); err != nil {
