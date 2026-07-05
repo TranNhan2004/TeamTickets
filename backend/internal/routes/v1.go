@@ -11,5 +11,10 @@ func RegisterV1(engine *gin.Engine, deps *app.Dependencies) {
 	v1 := engine.Group("/api/v1")
 
 	health.RegisterRoutes(v1, deps.HealthHandler)
-	users.RegisterRoutes(v1, deps.UserHandler)
+
+	protected := v1.Group("")
+	protected.Use(deps.AuthMiddleware)
+	protected.Use(deps.CSRFMiddleware)
+
+	users.RegisterRoutes(protected, deps.UserHandler)
 }

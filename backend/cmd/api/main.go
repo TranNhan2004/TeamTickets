@@ -30,7 +30,7 @@ func main() {
 
 	r := gin.Default()
 
-	dependencies := app.NewDependencies(appConfig.DB, appLogger)
+	dependencies := app.NewDependencies(appConfig, appLogger)
 	routes.RegisterV1(r, dependencies)
 
 	if err := r.Run(":" + appConfig.Port); err != nil {

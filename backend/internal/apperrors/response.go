@@ -31,3 +31,23 @@ func Respond(ctx *gin.Context, appErr *AppError) {
 		},
 	})
 }
+
+func RespondAbort(ctx *gin.Context, appErr *AppError) {
+	if appErr != nil {
+		ctx.AbortWithStatusJSON(appErr.StatusCode, gin.H{
+			"error": ErrorResponse{
+				Code:    string(appErr.Code),
+				Message: appErr.Message,
+				Details: appErr.Details,
+			},
+		})
+		return
+	}
+
+	ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+		"error": ErrorResponse{
+			Code:    "INTERNAL_SERVER_ERROR",
+			Message: "Something went wrong",
+		},
+	})
+}

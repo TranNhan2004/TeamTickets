@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/trannhanlv2004/team-tickets/internal/configs"
 	"github.com/trannhanlv2004/team-tickets/internal/database"
 	"github.com/trannhanlv2004/team-tickets/internal/features/users"
@@ -11,10 +12,13 @@ import (
 type Dependencies struct {
 	HealthHandler *health.Handler
 	UserHandler   *users.UserHandler
+
+	AuthMiddleware gin.HandlerFunc
+	CSRFMiddleware gin.HandlerFunc
 }
 
-func NewDependencies(dbConfig *configs.DBConfig, logger *logger.Logger) *Dependencies {
-	db, err := database.ConnectPostgres(*dbConfig)
+func NewDependencies(cfg *configs.AppConfig, logger *logger.Logger) *Dependencies {
+	db, err := database.ConnectPostgres(*cfg.DB)
 	if err != nil {
 		logger.Error.Printf("failed to connect postgres: %v", err)
 		panic(err)

@@ -12,6 +12,8 @@ type AppConfig struct {
 	Port   string
 	LogDir string
 	DB     *DBConfig
+	HTTP   *HTTPConfig
+	JWT    *JWTConfig
 }
 
 func LoadAppConfig() (*AppConfig, error) {
@@ -32,10 +34,22 @@ func LoadAppConfig() (*AppConfig, error) {
 		return nil, err
 	}
 
+	httpConfig, err := LoadHTTPConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	jwtConfig, err := LoadJWTConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	return &AppConfig{
 		Env:    appEnv,
 		Port:   os.Getenv("APP_PORT"),
 		LogDir: os.Getenv("LOG_DIR"),
 		DB:     dbConfig,
+		HTTP:   httpConfig,
+		JWT:    jwtConfig,
 	}, nil
 }

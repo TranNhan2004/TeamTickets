@@ -10,3 +10,8 @@ type AuditModel struct {
 	ActorID   *uuid.UUID
 	AuditTime time.Time
 }
+
+type CurrentUserModel struct {
+	UserID uuid.UUID
+	Email  string
+}
