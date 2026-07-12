@@ -26,8 +26,6 @@ const COLOR_MAP: Record<ButtonColor, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Button {
-  label = input.required<string>();
-
   color = input<ButtonColor>('primary');
   size = input<ButtonSize>('md');
   variant = input<ButtonVariant>('filled');

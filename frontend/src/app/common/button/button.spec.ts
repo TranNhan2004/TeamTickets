@@ -1,8 +1,15 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { Button } from './button';
+
+@Component({
+  imports: [Button],
+  template: '<app-button><span class="projected-content">Save</span></app-button>',
+})
+class ButtonTestHost {}
 
 describe('Button', () => {
   let component: Button;
@@ -15,7 +22,6 @@ describe('Button', () => {
 
     fixture = TestBed.createComponent(Button);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('label', 'Button');
     fixture.detectChanges();
     await fixture.whenStable();
   });
@@ -24,8 +30,18 @@ describe('Button', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should project content into the button', () => {
+    const hostFixture = TestBed.createComponent(ButtonTestHost);
+    hostFixture.detectChanges();
+
+    const projectedContent: HTMLElement = hostFixture.nativeElement.querySelector(
+      'button .projected-content',
+    );
+
+    expect(projectedContent.textContent).toBe('Save');
+  });
+
   it('should use the filled button color tokens', async () => {
-    fixture.componentRef.setInput('label', 'Danger');
     fixture.componentRef.setInput('color', 'danger');
     fixture.detectChanges();
     await fixture.whenStable();
