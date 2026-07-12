@@ -1,8 +1,15 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { Chip } from './chip';
+
+@Component({
+  imports: [Chip],
+  template: '<app-chip><span class="projected-content">Active</span></app-chip>',
+})
+class ChipTestHost {}
 
 describe('Chip', () => {
   let component: Chip;
@@ -15,7 +22,6 @@ describe('Chip', () => {
 
     fixture = TestBed.createComponent(Chip);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('label', 'Chip');
     fixture.detectChanges();
     await fixture.whenStable();
   });
@@ -24,8 +30,18 @@ describe('Chip', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should project content into the chip', () => {
+    const hostFixture = TestBed.createComponent(ChipTestHost);
+    hostFixture.detectChanges();
+
+    const projectedContent: HTMLElement = hostFixture.nativeElement.querySelector(
+      'mat-chip .projected-content',
+    );
+
+    expect(projectedContent.textContent).toBe('Active');
+  });
+
   it('should use the filled variant styles', async () => {
-    fixture.componentRef.setInput('label', 'Danger');
     fixture.componentRef.setInput('color', 'danger');
     fixture.detectChanges();
     await fixture.whenStable();

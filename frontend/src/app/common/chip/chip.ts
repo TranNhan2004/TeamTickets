@@ -25,8 +25,6 @@ const COLOR_MAP: Record<ChipColor, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Chip {
-  label = input.required<string>();
-
   color = input<ChipColor>('primary');
   size = input<ChipSize>('md');
   variant = input<ChipVariant>('filled');

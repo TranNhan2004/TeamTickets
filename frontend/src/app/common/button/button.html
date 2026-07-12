@@ -9,7 +9,7 @@
       [ngClass]="buttonClass()"
       [ngStyle]="buttonStyle()"
     >
-      {{ label() }}
+      <ng-content></ng-content>
     </button>
   }
   @case ('tonal') {
@@ -22,7 +22,7 @@
       [ngClass]="buttonClass()"
       [ngStyle]="buttonStyle()"
     >
-      {{ label() }}
+      <ng-content></ng-content>
     </button>
   }
   @case ('text') {
@@ -35,7 +35,7 @@
       [ngClass]="buttonClass()"
       [ngStyle]="buttonStyle()"
     >
-      {{ label() }}
+      <ng-content></ng-content>
     </button>
   }
   @default {
@@ -48,7 +48,7 @@
       [ngClass]="buttonClass()"
       [ngStyle]="buttonStyle()"
     >
-      {{ label() }}
+      <ng-content></ng-content>
     </button>
   }
 }
