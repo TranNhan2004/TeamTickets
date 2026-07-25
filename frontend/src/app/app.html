@@ -1,21 +1,13 @@
-<div>
-  <div *appHasAccess="hasAccess()">You have access to this content.</div>
+<app-nav-bar
+  [sideBarCollapsed]="sideBarCollapsed()"
+  (sideBarToggle)="toggleSideBar()"
+></app-nav-bar>
 
-  <!-- <div style="margin-top: 10px">
-    <app-bell-notification [count]="1" tooltipTitle="Open notifications"></app-bell-notification>
-  </div>
+<div class="tt-app-shell">
+  <app-side-bar [collapsed]="sideBarCollapsed()"></app-side-bar>
 
-  <app-card class="custom-card" width="200px" height="100px">
-    <div style="padding: 5px">Card content</div>
-  </app-card>
-
-  <app-dialog class="top-right-dialog" title="Notifications"> Dialog content </app-dialog>
-
-  <div class="skeleton-demo">
-    <app-skeleton variant="circle"></app-skeleton>
-    <app-skeleton variant="text" width="240px"></app-skeleton>
-    <app-skeleton variant="rectangle" width="320px" height="140px"></app-skeleton>
-  </div> -->
-
-  <app-button variant="filled" size="sm">Click me</app-button>
+  <main class="tt-app-shell__content">
+    <router-outlet></router-outlet>
+    <div *appHasAccess="hasAccess()">You have access to this content.</div>
+  </main>
 </div>

@@ -1,18 +1,18 @@
-.custom-card {
-  --tt-card-position: absolute;
-  --tt-card-top: 50px;
-  --tt-card-right: 50px;
-}
-
-.top-right-dialog {
-  --tt-dialog-position: fixed;
-  --tt-dialog-top: 24px;
-  --tt-dialog-right: 24px;
-}
-
-.skeleton-demo {
+:host {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin: 24px;
+  height: 100dvh;
+}
+
+.tt-app-shell {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+
+  &__content {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: auto;
+    background-color: var(--tp-color-surface);
+  }
 }
