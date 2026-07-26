@@ -8,10 +8,13 @@ import (
 )
 
 type AppConfig struct {
-	Env    string
-	Port   string
-	LogDir string
-	DB     *DBConfig
+	Env                string
+	Port               string
+	LogDir             string
+	CORSAllowedOrigins []string
+	DB                 *DBConfig
+	Keycloak           *KeycloakConfig
+	CSRF               *CSRFConfig
 }
 
 func LoadAppConfig() (*AppConfig, error) {
@@ -32,10 +35,23 @@ func LoadAppConfig() (*AppConfig, error) {
 		return nil, err
 	}
 
+	keycloakConfig, err := LoadKeycloakConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	csrfConfig, err := LoadCSRFConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	return &AppConfig{
-		Env:    appEnv,
-		Port:   os.Getenv("APP_PORT"),
-		LogDir: os.Getenv("LOG_DIR"),
-		DB:     dbConfig,
+		Env:                appEnv,
+		Port:               os.Getenv("APP_PORT"),
+		LogDir:             os.Getenv("LOG_DIR"),
+		CORSAllowedOrigins: parseCommaSeparatedEnv(os.Getenv("CORS_ALLOWED_ORIGINS")),
+		DB:                 dbConfig,
+		Keycloak:           keycloakConfig,
+		CSRF:               csrfConfig,
 	}, nil
 }
